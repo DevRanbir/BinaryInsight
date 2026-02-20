@@ -26,7 +26,7 @@ export function AppNavbar() {
             </div>
             <div className="flex items-center gap-4">
                 <span className="text-sm font-medium">{session.user?.name}</span>
-                <Button variant="outline" size="sm" onClick={() => signOut()}>Sign Out</Button>
+                <Button variant="outline" size="sm" onClick={() => signOut({ callbackUrl: "/" })}>Sign Out</Button>
             </div>
         </header>
     )
