@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Source_Serif_4, JetBrains_Mono } from "next/font/google";
+import { Atkinson_Hyperlegible, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const plusJakarta = Plus_Jakarta_Sans({
+const atkinsonHyperlegible = Atkinson_Hyperlegible({
   variable: "--font-sans",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -27,6 +28,7 @@ import { SessionProvider } from "@/components/SessionProvider";
 
 
 import { AppNavbar } from "@/components/AppNavbar";
+import { GlobalRouteLoader } from "@/components/GlobalRouteLoader";
 
 export default function RootLayout({
   children,
@@ -36,11 +38,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${plusJakarta.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${atkinsonHyperlegible.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <SessionProvider>
           <div className="min-h-screen">
             <AppNavbar />
+            <GlobalRouteLoader />
             {children}
           </div>
         </SessionProvider>

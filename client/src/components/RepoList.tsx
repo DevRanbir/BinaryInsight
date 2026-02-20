@@ -122,7 +122,7 @@ export default function RepoList() {
                             <p className="text-sm text-gray-500 mb-2 truncate">{repo.full_name}</p>
                             <div className="flex items-center justify-between text-xs text-gray-400">
                                 <span>{repo.language || 'Unknown'}</span>
-                                <span>Updated: {new Date(repo.updated_at).toLocaleDateString()}</span>
+                                <span>{new Date(repo.updated_at).toLocaleDateString()}</span>
                             </div>
                             <Link
                                 href={`/dashboard/${repo.owner.login}/${repo.name}`}

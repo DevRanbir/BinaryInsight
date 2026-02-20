@@ -48,9 +48,6 @@ export default function LoginPage() {
 
                 <Card className="w-full max-w-md justify-self-start md:justify-self-end bg-card/95 backdrop-blur">
                     <CardHeader className="space-y-2">
-                        <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                            <ShieldCheck className="h-5 w-5" />
-                        </div>
                         <CardTitle>Sign in</CardTitle>
                         <CardDescription>Use your GitHub account to continue to the dashboard.</CardDescription>
                     </CardHeader>

@@ -42,35 +42,14 @@ export default function RepoAnalyticsPage() {
 
     return (
         <div className="h-[calc(100vh-4rem)] flex flex-col">
-            <header className="px-6 py-4 border-b flex items-center justify-between shrink-0">
-                <h1 className="text-xl font-bold truncate">
-                    {owner} / {repo}
-                </h1>
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Branch</span>
-                    <select
-                        value={selectedBranch}
-                        onChange={(event) => setSelectedBranch(event.target.value)}
-                        className="h-9 rounded-md border bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        {branches.length === 0 ? (
-                            <option value="main">main</option>
-                        ) : (
-                            branches.map((branchName) => (
-                                <option key={branchName} value={branchName}>
-                                    {branchName}
-                                </option>
-                            ))
-                        )}
-                    </select>
-                </div>
-            </header>
             <main className="flex-1 overflow-hidden h-full">
                 <ResizableCommon
-                    key={`${owner as string}/${repo as string}:${selectedBranch}`}
+                    key={`${owner as string}/${repo as string}:${selectedBranch}:${token ? "authed" : "guest"}`}
                     owner={owner as string}
                     repo={repo as string}
                     branch={selectedBranch}
+                    branches={branches}
+                    onBranchChange={setSelectedBranch}
                 />
             </main>
         </div>
