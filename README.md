@@ -86,6 +86,37 @@ From `client/`:
 - `/dashboard/[owner]/[repo]` — repo analysis workspace
 - `/settings` — app settings
 
+## Workflow
+
+1. **Sign in with GitHub**
+  - User authenticates on `/login` via NextAuth.
+  - Access token is attached to session for GitHub API calls.
+
+2. **Open a repository**
+  - From `/dashboard`, paste a GitHub URL or `owner/repo`.
+  - App navigates to `/dashboard/[owner]/[repo]`.
+
+3. **Explore code by branch**
+  - Select branch from the repo workspace header.
+  - Browse files in the tree and preview content in the center pane.
+
+4. **Review pull requests**
+  - Use the PR panel on the right to choose a PR.
+  - Click **Review** to load changed files and patch diffs.
+
+5. **Analyze security risk**
+  - Review panel computes and shows:
+    - sensitive file/property changes
+    - environment-related changes
+    - total diff churn (added/removed lines)
+  - Risk level is surfaced as Minimal/Low/Medium/High.
+
+6. **Comment and submit review**
+  - Expand PR comments to discuss changes.
+  - Add comments inline in PR card thread area.
+  - Submit review action (Comment / Approve / Request changes).
+
+
 ## Current UX Notes
 
 - Main/global loader is shown during route transitions.
