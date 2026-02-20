@@ -9,8 +9,11 @@ export function SignIn() {
                 "use server"
                 await signIn("github", { redirectTo: "/dashboard" })
             }}
+            className="w-full"
         >
-            <Button type="submit">Sign in with GitHub</Button>
+            <Button type="submit" className="w-full h-10">
+                Sign in with GitHub
+            </Button>
         </form>
     )
 }
