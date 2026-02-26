@@ -21,7 +21,6 @@ export default function LoginPage() {
                     noise={0.1}
                     transparent
                     autoRotate={0}
-                    color=""
                 />
             </div>
             <div className="absolute inset-0 -z-10 bg-background/75" />

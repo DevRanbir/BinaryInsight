@@ -98,6 +98,24 @@ void main() {
 }
 `;
 
+/**
+ * @typedef {Object} ColorBendsProps
+ * @property {string} [className]
+ * @property {import('react').CSSProperties} [style]
+ * @property {number} [rotation]
+ * @property {number} [speed]
+ * @property {string[]} [colors]
+ * @property {boolean} [transparent]
+ * @property {number} [autoRotate]
+ * @property {number} [scale]
+ * @property {number} [frequency]
+ * @property {number} [warpStrength]
+ * @property {number} [mouseInfluence]
+ * @property {number} [parallax]
+ * @property {number} [noise]
+ */
+
+/** @param {ColorBendsProps} props */
 export default function ColorBends({
   className,
   style,
