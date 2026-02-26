@@ -3,13 +3,60 @@
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { Button } from "./ui/button"
+import { Input } from "./ui/input"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+
+const parseRepoInput = (value: string): { owner: string; repo: string } | null => {
+    const raw = value.trim()
+    if (!raw) return null
+
+    let path = raw
+
+    try {
+        if (raw.includes("github.com")) {
+            const normalized = raw.startsWith("http") ? raw : `https://${raw}`
+            const url = new URL(normalized)
+            if (!url.hostname.includes("github.com")) return null
+            path = url.pathname
+        }
+    } catch {
+        return null
+    }
+
+    const parts = path
+        .replace(/^\//, "")
+        .replace(/\.git$/i, "")
+        .split("/")
+        .filter(Boolean)
+
+    if (parts.length < 2) return null
+
+    return {
+        owner: parts[0],
+        repo: parts[1],
+    }
+}
 
 export default function RepoList() {
 
     const { data: session } = useSession()
+    const router = useRouter()
     const [repos, setRepos] = useState([])
     const [loading, setLoading] = useState(false)
+    const [repoLinkInput, setRepoLinkInput] = useState("")
+    const [repoLinkError, setRepoLinkError] = useState<string | null>(null)
+
+    const handleAnalyzeRepoLink = () => {
+        const parsedRepo = parseRepoInput(repoLinkInput)
+        if (!parsedRepo) {
+            setRepoLinkError("Enter a valid GitHub repo link or owner/repo.")
+            return
+        }
+
+        setRepoLinkError(null)
+        router.push(`/dashboard/${parsedRepo.owner}/${parsedRepo.repo}`)
+    }
 
     useEffect(() => {
         const fetchRepos = async () => {
@@ -44,6 +91,26 @@ export default function RepoList() {
 
     return (
         <div className="mt-4">
+            <div className="mb-6 rounded-lg border bg-white p-4 shadow-sm">
+                <h2 className="text-base font-semibold mb-2">Analyze any repository</h2>
+                <p className="text-sm text-gray-500 mb-3">Paste a GitHub repo URL or <span className="font-medium">owner/repo</span> to open it.</p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <Input
+                        value={repoLinkInput}
+                        onChange={(event) => setRepoLinkInput(event.target.value)}
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                                event.preventDefault()
+                                handleAnalyzeRepoLink()
+                            }
+                        }}
+                        placeholder="https://github.com/owner/repo or owner/repo"
+                    />
+                    <Button onClick={handleAnalyzeRepoLink}>Open Repository</Button>
+                </div>
+                {repoLinkError && <p className="mt-2 text-xs text-red-600">{repoLinkError}</p>}
+            </div>
+
             <h2 className="text-xl font-semibold mb-4">Your Recent Repositories</h2>
             {loading ? (
                 <p>Loading repositories...</p>
@@ -55,7 +122,7 @@ export default function RepoList() {
                             <p className="text-sm text-gray-500 mb-2 truncate">{repo.full_name}</p>
                             <div className="flex items-center justify-between text-xs text-gray-400">
                                 <span>{repo.language || 'Unknown'}</span>
-                                <span>Updated: {new Date(repo.updated_at).toLocaleDateString()}</span>
+                                <span>{new Date(repo.updated_at).toLocaleDateString()}</span>
                             </div>
                             <Link
                                 href={`/dashboard/${repo.owner.login}/${repo.name}`}

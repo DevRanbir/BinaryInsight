@@ -17,13 +17,61 @@ export default function PRDetailsPage() {
         author: "devuser",
         status: "Open",
         description: "This PR introduces GitHub OAuth using NextAuth.js. It includes new API routes and session management.",
-        risk: "Low",
+        diff: {
+            filesChanged: [
+                "client/src/auth.ts",
+                "client/src/app/api/auth/[...nextauth]/route.ts",
+                ".github/workflows/deploy.yml",
+                "client/.env.example"
+            ],
+            propertyChanges: [
+                "workflow permissions: contents read -> write",
+                "cookie config: secure false -> true"
+            ],
+            envAdded: ["GITHUB_CLIENT_SECRET"],
+            envRemoved: ["NEXTAUTH_URL"],
+            linesAdded: 482,
+            linesRemoved: 289
+        },
         checks: [
             { name: "Build", status: "passed" },
             { name: "Lint", status: "passed" },
             { name: "Tests", status: "failed" },
         ]
     }
+
+    const totalChurn = pr.diff.linesAdded + pr.diff.linesRemoved
+    const hasSensitiveFileChanges = pr.diff.filesChanged.some((file) =>
+        file.includes(".env") || file.includes("workflow") || file.includes("auth")
+    )
+    const hasEnvChanges = pr.diff.envAdded.length > 0 || pr.diff.envRemoved.length > 0
+    const hasLargeChurn = totalChurn > 600
+
+    const findings = [
+        {
+            name: "Sensitive files/properties changed",
+            detail: hasSensitiveFileChanges
+                ? `${pr.diff.filesChanged.length} files include auth/workflow/env paths with ${pr.diff.propertyChanges.length} property updates.`
+                : "No sensitive file paths or security-relevant property updates detected.",
+            status: hasSensitiveFileChanges ? "warning" : "passed"
+        },
+        {
+            name: "Environment variable changes",
+            detail: hasEnvChanges
+                ? `Added: ${pr.diff.envAdded.join(", ") || "none"} · Removed: ${pr.diff.envRemoved.join(", ") || "none"}`
+                : "No environment variable additions or removals.",
+            status: hasEnvChanges ? "warning" : "passed"
+        },
+        {
+            name: "Large diff / churn",
+            detail: `${pr.diff.linesAdded} additions, ${pr.diff.linesRemoved} deletions (${totalChurn} total).`,
+            status: hasLargeChurn ? "warning" : "passed"
+        }
+    ]
+
+    const warningCount = findings.filter((f) => f.status === "warning").length
+    const risk = warningCount >= 3 ? "High" : warningCount === 2 ? "Medium" : warningCount === 1 ? "Low" : "Minimal"
+    const riskDotClass = risk === "High" ? "bg-red-500" : risk === "Medium" ? "bg-yellow-500" : "bg-green-500"
 
     return (
         <div className="p-8 max-w-4xl mx-auto space-y-6">
@@ -54,10 +102,29 @@ export default function PRDetailsPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center gap-2">
-                                <div className="h-3 w-3 rounded-full bg-green-500"></div>
-                                <span className="font-medium text-lg">{pr.risk} Risk</span>
+                                <div className={`h-3 w-3 rounded-full ${riskDotClass}`}></div>
+                                <span className="font-medium text-lg">{risk} Risk</span>
                             </div>
-                            <p className="text-sm text-gray-500 mt-2">AI Analysis indicates minimal impact on core services.</p>
+                            <p className="text-sm text-gray-500 mt-2">Security analysis checks file/property changes, env updates, and total diff churn.</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Security Analysis</CardTitle>
+                            <CardDescription>Flags risky pull request changes before merge.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            {findings.map((item, idx) => (
+                                <div key={idx} className="rounded-md border p-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">{item.name}</span>
+                                        {item.status === "passed" && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                                        {item.status === "warning" && <AlertTriangle className="h-4 w-4 text-yellow-500" />}
+                                    </div>
+                                    <p className="mt-1 text-xs text-gray-500">{item.detail}</p>
+                                </div>
+                            ))}
                         </CardContent>
                     </Card>
 
