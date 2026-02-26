@@ -1,3 +1,9 @@
+<!-- PROJECT IMAGE / BANNER -->
+<p align="center">
+  <img width="1854" height="1082" alt="image" src="https://github.com/user-attachments/assets/ae28727b-95db-45a9-833e-53a87c8673cd" />
+
+</p>
+
 # 🚀 BinaryInsight
 
 > An AI-powered Pull Request & Code Review Management System to streamline PR workflows, automate reviewer assignment, assess risk, and determine deployment readiness.
